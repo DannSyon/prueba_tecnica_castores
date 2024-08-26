@@ -1,0 +1,43 @@
+DIAGRAMA RELACIONAL DE LAS TABLAS DE LA APLICACION
+
+PRODUCT ||--|{ INVENTORY : tiene
+INVENTORY ||--|{ MOVEMENT : tiene
+USER ||--|{ MOVEMENT : realiza
+ROLE ||--|{ USER : tiene
+
+PRODUCT {
+  id INT PRIMARY KEY
+  name VARCHAR(255)
+  description TEXT
+  active BOOLEAN
+}
+
+INVENTORY {
+  id INT PRIMARY KEY
+  product_id INT
+  quantity INT CHECK (quantity >= 0)
+  date DATE
+  FOREIGN KEY (product_id) REFERENCES PRODUCT(id) ON DELETE CASCADE
+}
+
+MOVEMENT {
+  id INT PRIMARY KEY
+  inventory_id INT
+  type ENUM('IN', 'OUT') -- O CHAR(3) o VARCHAR(10) según tus necesidades
+  quantity INT CHECK (quantity > 0)
+  date DATE
+  FOREIGN KEY (inventory_id) REFERENCES INVENTORY(id) ON DELETE CASCADE
+}
+
+USER {
+  id INT PRIMARY KEY
+  username VARCHAR(255) UNIQUE
+  password CHAR(60) -- Asumiendo contraseñas encriptadas con bcrypt
+  role_id INT
+  FOREIGN KEY (role_id) REFERENCES ROLE(id) ON DELETE SET NULL
+}
+
+ROLE {
+  id INT PRIMARY KEY
+  name VARCHAR(255)
+}
