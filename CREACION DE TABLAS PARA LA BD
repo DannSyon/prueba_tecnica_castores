@@ -1,0 +1,45 @@
+CREATE TABLE PRODUCT (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  active BOOLEAN DEFAULT TRUE
+);
+
+-- Creación de la tabla INVENTORY
+CREATE TABLE INVENTORY (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  product_id INT NOT NULL,
+  quantity INT NOT NULL CHECK (quantity >= 0),
+  date DATE DEFAULT CURRENT_DATE,
+  FOREIGN KEY (product_id) REFERENCES PRODUCT(id) ON DELETE CASCADE
+);
+
+-- Creación de la tabla MOVEMENT
+CREATE TABLE MOVEMENT (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  inventory_id INT NOT NULL,
+  type ENUM('entrada', 'salida') NOT NULL, -- Cambiado a ENUM
+  quantity INT NOT NULL CHECK (quantity > 0),
+  date DATE DEFAULT CURRENT_DATE,
+  FOREIGN KEY (inventory_id) REFERENCES INVENTORY(id) ON DELETE CASCADE
+);
+
+-- Creación de la tabla USER
+CREATE TABLE USER (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(255) NOT NULL UNIQUE,
+  password CHAR(60) NOT NULL, -- Asumiendo contraseñas encriptadas
+  role_id INT NOT NULL,
+  FOREIGN KEY (role_id) REFERENCES ROLE(id) ON DELETE SET NULL
+);
+
+-- Creación de la tabla ROLE
+CREATE TABLE ROLE (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL
+);
+
+-- Inserción de roles (administrador y almacenista)
+INSERT INTO ROLE (name) VALUES 
+  ('Administrador'),
+  ('Almacenista');
